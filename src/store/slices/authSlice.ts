@@ -10,7 +10,7 @@ interface IAuthSlice {
 
 const initialState: IAuthSlice = {
     isAuth: false,
-    isAuthInPending: false,
+    isAuthInPending: true,
     user: null,
 };
 
@@ -25,8 +25,11 @@ export const authSlice = createSlice({
             state.isAuth = action.payload.isAuth;
             state.user = action.payload.user;
         },
+        setIsAuthInPending: (state, action: PayloadAction<boolean>) => {
+            state.isAuthInPending = action.payload;
+        },
     },
 });
 
-export const { setAuth } = authSlice.actions;
+export const { setAuth, setIsAuthInPending } = authSlice.actions;
 export default authSlice.reducer;

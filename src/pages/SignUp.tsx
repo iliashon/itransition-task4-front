@@ -3,7 +3,8 @@ import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline";
 import { useState } from "react";
 import { Alert } from "@mui/material";
 import { TSignUpForm } from "../types/typesForm.ts";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import useAuth from "../hooks/useAuth.ts";
 
 const SignUp = () => {
     const {
@@ -11,15 +12,23 @@ const SignUp = () => {
         handleSubmit,
         formState: { errors },
     } = useForm<TSignUpForm>();
-
+    const navigate = useNavigate();
+    const { signUp } = useAuth();
+    const [error, setError] = useState<string>();
     const onSubmitRegistration: SubmitHandler<TSignUpForm> = (data) => {
-        console.log(data);
+        signUp(data).then((res) => {
+            if (typeof res === "string") {
+                setError(res);
+            } else {
+                navigate("/cabinet");
+            }
+        });
     };
 
     const [visiblePass, setVisiblePass] = useState(false);
 
     return (
-        <div className="isolate bg-white px-6 py-24 sm:py-32 lg:px-8">
+        <main className="isolate bg-white px-6 py-24 sm:py-32 lg:px-8">
             <div
                 className="absolute inset-x-0 top-[-10rem] -z-10 transform-gpu overflow-hidden blur-3xl sm:top-[-20rem]"
                 aria-hidden="true"
@@ -36,6 +45,16 @@ const SignUp = () => {
                 <h2 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
                     Registartion
                 </h2>
+                {error ? (
+                    <Alert
+                        className="mt-7 -mb-9 w-2/3 mx-auto"
+                        severity="error"
+                    >
+                        {error}
+                    </Alert>
+                ) : (
+                    ""
+                )}
             </div>
             <form
                 onSubmit={handleSubmit(onSubmitRegistration)}
@@ -167,7 +186,7 @@ const SignUp = () => {
                     </Link>
                 </div>
             </form>
-        </div>
+        </main>
     );
 };
 
