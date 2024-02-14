@@ -1,10 +1,12 @@
 import { SubmitHandler, useForm } from "react-hook-form";
 import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Alert } from "@mui/material";
 import { TSignUpForm } from "../types/typesForm.ts";
 import { Link, useNavigate } from "react-router-dom";
 import useAuth from "../hooks/useAuth.ts";
+import { useSelector } from "react-redux";
+import { RootState } from "../store";
 
 const SignUp = () => {
     const {
@@ -15,6 +17,13 @@ const SignUp = () => {
     const navigate = useNavigate();
     const { signUp } = useAuth();
     const [error, setError] = useState<string>();
+    const authState = useSelector((state: RootState) => state.auth);
+
+    useEffect(() => {
+        if (authState.isAuth) {
+            navigate("/cabinet");
+        }
+    });
     const onSubmitRegistration: SubmitHandler<TSignUpForm> = (data) => {
         signUp(data).then((res) => {
             if (typeof res === "string") {

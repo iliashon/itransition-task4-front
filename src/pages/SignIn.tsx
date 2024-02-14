@@ -2,9 +2,11 @@ import { Link, useNavigate } from "react-router-dom";
 import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline";
 import { Alert } from "@mui/material";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { TSignInForm } from "../types/typesForm.ts";
 import useAuth from "../hooks/useAuth.ts";
+import { useSelector } from "react-redux";
+import { RootState } from "../store";
 
 const SignIn = () => {
     const {
@@ -16,6 +18,13 @@ const SignIn = () => {
     const { signIn } = useAuth();
     const [error, setError] = useState<string>();
     const [visiblePass, setVisiblePass] = useState(false);
+    const authState = useSelector((state: RootState) => state.auth);
+
+    useEffect(() => {
+        if (authState.isAuth) {
+            navigate("/cabinet");
+        }
+    });
 
     const onSubmitLogin: SubmitHandler<TSignInForm> = (data) => {
         signIn(data).then((res) => {

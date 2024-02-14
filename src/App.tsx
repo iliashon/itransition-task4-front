@@ -16,7 +16,7 @@ function App() {
         if (localStorage.getItem("token")) {
             checkAuth();
         }
-    });
+    }, []);
 
     return (
         <Routes>
