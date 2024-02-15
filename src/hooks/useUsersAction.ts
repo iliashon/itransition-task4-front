@@ -23,6 +23,7 @@ function useUsersAction() {
     }
 
     async function getUsers() {
+        setLoading(true);
         try {
             const res = await UsersService.getUsers();
             return res.data;
@@ -34,6 +35,7 @@ function useUsersAction() {
     }
 
     async function deleteUsers(data: number[]) {
+        setLoading(true);
         try {
             await UsersService.deleteUsers(data);
             return true;
@@ -45,6 +47,7 @@ function useUsersAction() {
     }
 
     async function updateUsers(data: number[], blockedStatus: boolean) {
+        setLoading(true);
         try {
             const updateData: TUpdateUsersData = {
                 blocked: blockedStatus,

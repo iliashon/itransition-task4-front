@@ -51,7 +51,7 @@ const COLUMNS: GridColDef[] = [
 const Table = () => {
     const [rowSelected, setRowSelected] = useState<GridRowSelectionModel>([]);
     const [users, setUsers] = useState<IUser[]>();
-    const { getUsers, deleteUsers, updateUsers } = useUsersAction();
+    const { getUsers, deleteUsers, updateUsers, loading } = useUsersAction();
 
     const handleGetUsers = () => {
         getUsers().then((data) => {
@@ -90,6 +90,7 @@ const Table = () => {
                         startIcon={<TrashIcon className="h-5" />}
                         color="error"
                         onClick={handleDeleteUsers}
+                        disabled={loading}
                     >
                         Delete
                     </Button>
@@ -99,6 +100,7 @@ const Table = () => {
                         startIcon={<LockClosedIcon className="h-5" />}
                         color="warning"
                         onClick={() => handleUpdateStatusUsers(true)}
+                        disabled={loading}
                     >
                         Block
                     </Button>
@@ -108,13 +110,21 @@ const Table = () => {
                         startIcon={<LockOpenIcon className="h-5" />}
                         color="success"
                         onClick={() => handleUpdateStatusUsers(false)}
+                        disabled={loading}
                     >
                         Unblock
                     </Button>
                 </div>
             </div>
             {users ? (
-                <div>
+                <div className="relative">
+                    {loading ? (
+                        <div className="absolute bg-gray-100 opacity-70 top-0 bottom-0 right-0 left-0 flex justify-center items-center z-20">
+                            <ClipLoader className="text-black h-10" />
+                        </div>
+                    ) : (
+                        ""
+                    )}
                     <DataGrid
                         initialState={{
                             pagination: {
