@@ -8,6 +8,7 @@ import SignUp from "./pages/SignUp.tsx";
 import PrivateRoute from "./routes/PrivateRoute.tsx";
 import useAuth from "./hooks/useAuth.ts";
 import { useEffect } from "react";
+import CheckAuth from "./routes/CheckAuth.tsx";
 
 function App() {
     const { checkAuth } = useAuth();
@@ -22,8 +23,10 @@ function App() {
         <Routes>
             <Route path="/" element={<Layout />}>
                 <Route index element={<Home />} />
-                <Route path="sign-in" element={<SignIn />} />
-                <Route path="sign-up" element={<SignUp />} />
+                <Route element={<CheckAuth />}>
+                    <Route path="sign-in" element={<SignIn />} />
+                    <Route path="sign-up" element={<SignUp />} />
+                </Route>
                 <Route element={<PrivateRoute />}>
                     <Route path="cabinet" element={<Cabinet />} />
                 </Route>

@@ -132,10 +132,9 @@ const Table = () => {
                         }}
                         rowSelectionModel={rowSelected}
                     />
-                    <pre>{JSON.stringify(rowSelected)}</pre>
                 </div>
             ) : (
-                <div>
+                <div className="text-center mt-60">
                     <ClipLoader />
                 </div>
             )}

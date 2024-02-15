@@ -1,12 +1,11 @@
 import { SubmitHandler, useForm } from "react-hook-form";
 import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Alert } from "@mui/material";
 import { TSignUpForm } from "../types/typesForm.ts";
 import { Link, useNavigate } from "react-router-dom";
 import useAuth from "../hooks/useAuth.ts";
-import { useSelector } from "react-redux";
-import { RootState } from "../store";
+import { ClipLoader } from "react-spinners";
 
 const SignUp = () => {
     const {
@@ -17,27 +16,30 @@ const SignUp = () => {
     const navigate = useNavigate();
     const { signUp } = useAuth();
     const [error, setError] = useState<string>();
-    const authState = useSelector((state: RootState) => state.auth);
+    const [visiblePass, setVisiblePass] = useState(false);
+    const [loading, setLoading] = useState(false);
 
-    useEffect(() => {
-        if (authState.isAuth) {
-            navigate("/cabinet");
-        }
-    });
     const onSubmitRegistration: SubmitHandler<TSignUpForm> = (data) => {
+        setLoading(true);
         signUp(data).then((res) => {
             if (typeof res === "string") {
                 setError(res);
             } else {
                 navigate("/cabinet");
             }
+            setLoading(false);
         });
     };
 
-    const [visiblePass, setVisiblePass] = useState(false);
-
     return (
         <main className="isolate bg-white px-6 py-24 sm:py-32 lg:px-8">
+            {loading ? (
+                <div className="absolute bg-gray-100 opacity-70 top-0 bottom-0 right-0 left-0 flex justify-center items-center z-20">
+                    <ClipLoader className="text-black h-10" />
+                </div>
+            ) : (
+                ""
+            )}
             <div
                 className="absolute inset-x-0 top-[-10rem] -z-10 transform-gpu overflow-hidden blur-3xl sm:top-[-20rem]"
                 aria-hidden="true"

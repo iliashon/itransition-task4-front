@@ -44,7 +44,7 @@ const Header = () => {
                         >
                             Cabinet
                         </Link>
-                        <h3 className="bg-gray-200 border w-10 h-10 flex justify-center items-center border-black px-4 py-1 rounded-full">
+                        <h3 className="bg-white border-2 w-10 h-10 text-indigo-600 font-bold flex justify-center items-center border-indigo-600 px-4 py-1 rounded-full">
                             {authState.user?.first_name[0]}
                         </h3>
                     </div>

@@ -2,11 +2,10 @@ import { Link, useNavigate } from "react-router-dom";
 import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline";
 import { Alert } from "@mui/material";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { TSignInForm } from "../types/typesForm.ts";
 import useAuth from "../hooks/useAuth.ts";
-import { useSelector } from "react-redux";
-import { RootState } from "../store";
+import { ClipLoader } from "react-spinners";
 
 const SignIn = () => {
     const {
@@ -18,26 +17,28 @@ const SignIn = () => {
     const { signIn } = useAuth();
     const [error, setError] = useState<string>();
     const [visiblePass, setVisiblePass] = useState(false);
-    const authState = useSelector((state: RootState) => state.auth);
-
-    useEffect(() => {
-        if (authState.isAuth) {
-            navigate("/cabinet");
-        }
-    });
-
+    const [loading, setLoading] = useState(false);
     const onSubmitLogin: SubmitHandler<TSignInForm> = (data) => {
+        setLoading(true);
         signIn(data).then((res) => {
             if (typeof res === "string") {
                 setError(res);
             } else {
                 navigate("/cabinet");
             }
+            setLoading(false);
         });
     };
 
     return (
         <main className="flex min-h-full flex-1 flex-col mt-32 justify-center px-6 py-12 lg:px-8">
+            {loading ? (
+                <div className="absolute bg-gray-100 opacity-70 top-0 bottom-0 right-0 left-0 flex justify-center items-center z-20">
+                    <ClipLoader className="text-black h-10" />
+                </div>
+            ) : (
+                ""
+            )}
             <div className="sm:mx-auto sm:w-full sm:max-w-sm">
                 <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
                     Sign in to your account
