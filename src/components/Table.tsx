@@ -24,7 +24,16 @@ const COLUMNS: GridColDef[] = [
     { field: "email", headerName: "Email", width: 170 },
     { field: "first_name", headerName: "First name" },
     { field: "last_name", headerName: "Last name", width: 130 },
-    { field: "blocked", headerName: "Status", width: 80 },
+    {
+        field: "blocked",
+        headerName: "Status",
+        width: 80,
+        valueGetter: (params: GridValueGetterParams) => {
+            if (typeof params.value === "boolean") {
+                return params.value ? "Blocked" : "Active";
+            }
+        },
+    },
     {
         field: "last_login",
         headerName: "Last login",
@@ -82,7 +91,7 @@ const Table = () => {
     return (
         <>
             <div className="flex justify-between mb-2">
-                <h1 className="text-2xl mb-2">Table</h1>
+                <h1 className="text-2xl mb-2">Users</h1>
                 <div className="flex gap-5">
                     <Button
                         variant="contained"
