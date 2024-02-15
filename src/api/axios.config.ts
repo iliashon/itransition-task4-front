@@ -1,6 +1,6 @@
 import axios from "axios";
 
-export const API_ENDPOINT = "http://localhost:3000/users";
+export const API_ENDPOINT = process.env.API_ENDPOINT;
 
 export const api = axios.create({
     withCredentials: true,
