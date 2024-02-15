@@ -5,39 +5,80 @@ import {
     GridRowSelectionModel,
     GridValueGetterParams,
 } from "@mui/x-data-grid";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@mui/material";
 import {
     LockClosedIcon,
     LockOpenIcon,
     TrashIcon,
 } from "@heroicons/react/24/outline";
+import useUsersAction from "../hooks/useUsersAction.ts";
+import { ClipLoader } from "react-spinners";
 
 const style = {
     actionButton: "h-8",
 };
 
 const COLUMNS: GridColDef[] = [
-    { field: "id" },
-    { field: "email", width: 170 },
-    { field: "first_name" },
-    { field: "last_name", width: 130 },
-    { field: "blocked" },
+    { field: "id", headerName: "ID", width: 15 },
+    { field: "email", headerName: "Email", width: 170 },
+    { field: "first_name", headerName: "First name" },
+    { field: "last_name", headerName: "Last name", width: 130 },
+    { field: "blocked", headerName: "Status", width: 80 },
     {
         field: "last_login",
+        headerName: "Last login",
+        width: 230,
         valueGetter: (params: GridValueGetterParams) =>
-            params.value ? params.value : "null",
+            params.value
+                ? new Date(params.value).toUTCString()
+                : "User is not logged in",
     },
     {
         field: "updated_at",
-        width: 200,
-        valueGetter: (params: GridValueGetterParams) => params.value,
+        headerName: "Last update",
+        width: 250,
+        valueGetter: (params) => new Date(params.value).toUTCString(),
     },
-    { field: "created_at", width: 200 },
+    {
+        field: "created_at",
+        headerName: "Create time",
+        width: 250,
+        valueGetter: (params) => new Date(params.value).toUTCString(),
+    },
 ];
 
-const Table = ({ data }: { data: IUser[] }) => {
+const Table = () => {
     const [rowSelected, setRowSelected] = useState<GridRowSelectionModel>([]);
+    const [users, setUsers] = useState<IUser[]>();
+    const { getUsers, deleteUsers, updateUsers } = useUsersAction();
+
+    const handleGetUsers = () => {
+        getUsers().then((data) => {
+            setUsers(data);
+        });
+    };
+
+    const handleDeleteUsers = () => {
+        deleteUsers(rowSelected as number[]).then((res) => {
+            if (res) {
+                handleGetUsers();
+            }
+        });
+    };
+
+    const handleUpdateStatusUsers = (status: boolean) => {
+        updateUsers(rowSelected as number[], status).then((res) => {
+            if (res) {
+                handleGetUsers();
+            }
+        });
+    };
+
+    useEffect(() => {
+        handleGetUsers();
+    }, []);
+
     return (
         <>
             <div className="flex justify-between mb-2">
@@ -48,6 +89,7 @@ const Table = ({ data }: { data: IUser[] }) => {
                         className={style.actionButton}
                         startIcon={<TrashIcon className="h-5" />}
                         color="error"
+                        onClick={handleDeleteUsers}
                     >
                         Delete
                     </Button>
@@ -56,6 +98,7 @@ const Table = ({ data }: { data: IUser[] }) => {
                         className={style.actionButton}
                         startIcon={<LockClosedIcon className="h-5" />}
                         color="warning"
+                        onClick={() => handleUpdateStatusUsers(true)}
                     >
                         Block
                     </Button>
@@ -64,23 +107,38 @@ const Table = ({ data }: { data: IUser[] }) => {
                         className={style.actionButton}
                         startIcon={<LockOpenIcon className="h-5" />}
                         color="success"
+                        onClick={() => handleUpdateStatusUsers(false)}
                     >
                         Unblock
                     </Button>
                 </div>
             </div>
-            <div>
-                <DataGrid
-                    columns={COLUMNS}
-                    rows={data}
-                    checkboxSelection
-                    onRowSelectionModelChange={(newRowSelected) => {
-                        setRowSelected(newRowSelected);
-                    }}
-                    rowSelectionModel={rowSelected}
-                />
-                <pre>{JSON.stringify(rowSelected)}</pre>
-            </div>
+            {users ? (
+                <div>
+                    <DataGrid
+                        initialState={{
+                            pagination: {
+                                paginationModel: {
+                                    pageSize: 15,
+                                },
+                            },
+                        }}
+                        pageSizeOptions={[5, 10, 15]}
+                        columns={COLUMNS}
+                        rows={users}
+                        checkboxSelection
+                        onRowSelectionModelChange={(newRowSelected) => {
+                            setRowSelected(newRowSelected);
+                        }}
+                        rowSelectionModel={rowSelected}
+                    />
+                    <pre>{JSON.stringify(rowSelected)}</pre>
+                </div>
+            ) : (
+                <div>
+                    <ClipLoader />
+                </div>
+            )}
         </>
     );
 };

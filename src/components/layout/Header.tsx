@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { RootState } from "../../store";
 import useAuth from "../../hooks/useAuth.ts";
+import { Alert } from "@mui/material";
 
 const Header = () => {
     const authState = useSelector((state: RootState) => state.auth);
@@ -23,8 +24,14 @@ const Header = () => {
                         itupalski
                     </Link>
                 </div>
+                {authState.error ? (
+                    <Alert severity="error">{authState.error}</Alert>
+                ) : (
+                    ""
+                )}
+
                 {authState.isAuth ? (
-                    <div className="hidden gap-4 items-center lg:flex lg:flex-1 lg:justify-end">
+                    <div className="gap-4 flex items-center ">
                         <button
                             onClick={handleLogout}
                             className="text-sm font-semibold leading-6 text-gray-900"

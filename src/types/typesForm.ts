@@ -9,3 +9,8 @@ export type TSignUpForm = {
     first_name: string;
     last_name: string;
 };
+
+export type TUpdateUsersData = {
+    blocked: boolean;
+    id: number[];
+};

@@ -1,7 +1,11 @@
 import { TSignInForm, TSignUpForm } from "../types/typesForm.ts";
 import AuthService from "../api/services/AuthService.ts";
 import { useAppDispatch } from "../store/typedHooks.ts";
-import { setAuth, setIsAuthInPending } from "../store/slices/authSlice.ts";
+import {
+    setAuth,
+    setError,
+    setIsAuthInPending,
+} from "../store/slices/authSlice.ts";
 import { AxiosError } from "axios";
 
 function useAuth() {
@@ -70,8 +74,16 @@ function useAuth() {
             return true;
         } catch (err) {
             if (err instanceof AxiosError) {
-                if (err.response?.status === 403) {
+                if (
+                    err.response?.status === 403 ||
+                    err.response?.status === 401
+                ) {
                     localStorage.removeItem("token");
+                    dispatch(setAuth({ isAuth: false, user: null }));
+                    dispatch(setError(err.response.data.message));
+                    setTimeout(() => {
+                        dispatch(setError(null));
+                    }, 5000);
                 }
                 throw new Error(err.response?.data.message);
             } else {
